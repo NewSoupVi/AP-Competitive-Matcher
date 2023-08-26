@@ -12,14 +12,15 @@ discouraged_games = defaultdict(lambda: 0)
 
 # Thinker with these:
 
-max_difference = 5  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
-minimum_level = 3 # The minimum skill level of the worst player of a game. Good value teams: 3. At 5 teams or higher, you might need to lower the value to 2.
+max_difference = 2  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
+minimum_level = 2 # The minimum skill level of the worst player of a game. Good value teams: 3. At 5 teams or higher, you might need to lower the value to 2.
 lowered_minimum = 2 # If there is a player that cannot match with anyone in the current settings, lower standard *for them* to this value.
 # Recommended action for restrictive games is to alternate lowering minimum_level and lowered_minimum.
 
 discouraged_games.update({  # Games that should be less likely to show up. This is a flat value added to error.
     "Stardew": 1,
     "VVVVVV": 1,
+    "Slay the Spire": 10,
 })
 completely_disallowed_games = {  # Completely disallow these games. Doing so might increase performance over just setting a really high value above.
     "ChecksFinder",
@@ -40,7 +41,7 @@ only_use_best_match_for_player_combination = True
 
 # Set the amount of teams. 7 is probably the max for reasonable computation time.:
 
-teams = 3  # The max for this is probably 7.
+teams = 4  # The max for this is probably 7.
 
 # Determine how negative values are interpreted.
 # A negative value means "I don't want to play this game but I will if I have to".
@@ -83,6 +84,11 @@ perfect_team_balancing = False
 # I.e.: Set this to 1 if you just want the best combination as quickly as possible. Otherwise, probably leave it at 10.
 
 results_amount = 10
+
+# Threads do not share info, so they each get a certain amount of results allocated.
+# The lower this number, the faster the program will go. However, some results may be lost.
+
+results_per_thread = 3
 
 
 # Finally, tinker with the value function:
@@ -238,7 +244,8 @@ def balance_teams(result):
 def print_combination(arr, n, r):
     data = [0] * r
 
-    combination_util(arr, data, 0,
+    global results
+    results = combination_util(arr, data, 0,
                      n - 1, 0, r)
 
 
@@ -265,23 +272,18 @@ lock = threading.Lock()
 
 
 def print_result(cycles):
-    global results
     global achievable_score
-
-    lock.acquire()
 
     new_score = get_score(cycles)
 
-    if len(results) < results_amount:
-        if not len(results):
-            print("Found something! If things are taking too long, rerun with 'print_results_immediately = True'.")
+    if len(results) < results_per_thread:
+        # if not len(results):
+        #     print("Found something! If things are taking too long, rerun with 'print_results_immediately = True'.")
 
         results.append((cycles.copy(), new_score))
 
         if print_results_immediately:
             print_single_result((cycles.copy(), new_score))
-
-        lock.release()
         return
 
     if new_score < results[-1][1]:
@@ -294,12 +296,17 @@ def print_result(cycles):
         results.sort(key=lambda r: r[1])
         achievable_score = results[-1][1]
 
-    lock.release()
-
 
 def combination_util(arr, data, start,
-                     end, index, r):
+                     end, index, r, thread_achievable_score=None):
     global achievable_score
+
+    if index == 0:
+        thread_achievable_score = multiprocessing.Manager().Value("thread_achievable_score", math.inf)
+
+    if index == 1:
+        achievable_score = thread_achievable_score.value
+        print("Starting new thread.")
 
     if index == r:
         print_result(data)
@@ -330,7 +337,6 @@ def combination_util(arr, data, start,
         if index == 0:
             if i >= worst_player_count:
                 break
-            print(f"{i+1}/{worst_player_count}. Later iterations go faster.")
 
         if arr[i][0] not in remaining_tuples:
             i += 1
@@ -343,26 +349,23 @@ def combination_util(arr, data, start,
             continue
 
         if index == 0:
-            threads.append(multiprocessing.Process(target=combination_util, args=(arr, data.copy(), i + 1, end, index + 1, r)))
-
-            if len(threads) >= 8:
-                for thread in threads:
-                    thread.start()
-
-                for thread in threads:
-                    thread.join()
-
-                threads = []
+            threads.append((arr, data.copy(), i + 1, end, index + 1, r, thread_achievable_score))
         else:
             combination_util(arr, data.copy(), i + 1,
-                            end, index + 1, r)
+                            end, index + 1, r, thread_achievable_score)
         i += 1
 
-    for thread in threads:
-        thread.start()
+    if index == 1:
+        new_best_achievable = min(thread_achievable_score.value, achievable_score)
+        print(f"Thread ended. Updating achievable_score to: {new_best_achievable}")
+        thread_achievable_score.set(new_best_achievable)
+        return results
+    if index == 0:
+        print(f"There are {len(threads)} threads to execute.")
 
-    for thread in threads:
-        thread.join()
+        with multiprocessing.Pool(8) as p:
+            multi_results = p.starmap(combination_util, threads)
+        return [j for sub in multi_results for j in sub]
 
 
 def find_cycle_set(cycles, n):
@@ -481,7 +484,7 @@ def n_matching_experimental(persons, games):
     find_cycle_set(possible_tuples, int(len(persons) / teams))
 
     global results
-    results.sort(key=lambda x: x[1])
+    results.sort(key=lambda x: -x[1])
 
     if not results:
         print("No combinations were found.")
