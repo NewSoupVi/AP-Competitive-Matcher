@@ -4,6 +4,7 @@ import math
 import multiprocessing
 import threading
 from collections import defaultdict
+from datetime import datetime
 from typing import Dict
 
 import networkx
@@ -13,7 +14,7 @@ discouraged_games = defaultdict(lambda: 0)
 # Thinker with these:
 
 max_difference = 3  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
-minimum_level = 2 # The minimum skill level of the worst player of a game. Good value teams: 3. At 5 teams or higher, you might need to lower the value to 2.
+minimum_level = 3 # The minimum skill level of the worst player of a game. Good value teams: 3. At 5 teams or higher, you might need to lower the value to 2.
 lowered_minimum = 2 # If there is a player that cannot match with anyone in the current settings, lower standard *for them* to this value.
 # Recommended action for restrictive games is to alternate lowering minimum_level and lowered_minimum.
 
@@ -41,7 +42,7 @@ only_use_best_match_for_player_combination = True
 
 # Set the amount of teams. 7 is probably the max for reasonable computation time.:
 
-teams = 4  # The max for this is probably 7.
+teams = 3  # The max for this is probably 7.
 
 # Determine how negative values are interpreted.
 # A negative value means "I don't want to play this game but I will if I have to".
@@ -485,7 +486,7 @@ def n_matching_experimental(persons, games):
             too_restrictive_players.add(player)
             print(f"With these settings, player {player.name} does not play any game that {teams - 1} other players play.")
 
-    while too_restrictive_players:
+    if too_restrictive_players:
         print("As a result, no combinations were found.")
         print("Attempting to lower standard.")
 
@@ -527,6 +528,8 @@ def n_matching_experimental(persons, games):
 
 
 if __name__ == '__main__':
+    start = datetime.now()
+
     if not disallowed_combinations:
         disallowed_combinations = set()
     if not force_same_team:
@@ -622,3 +625,9 @@ if __name__ == '__main__':
     print("---")
 
     n_matching_experimental(persons, game_names.values())
+
+    done = datetime.now()
+
+    delta = done - start
+
+    print("Time needed: " + str(delta))
