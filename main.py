@@ -1,6 +1,8 @@
 import copy
 import itertools
 import math
+import multiprocessing
+import threading
 from collections import defaultdict
 from typing import Dict
 
@@ -10,7 +12,7 @@ discouraged_games = defaultdict(lambda: 0)
 
 # Thinker with these:
 
-max_difference = 3  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
+max_difference = 5  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
 minimum_level = 3 # The minimum skill level of the worst player of a game. Good value teams: 3. At 5 teams or higher, you might need to lower the value to 2.
 lowered_minimum = 2 # If there is a player that cannot match with anyone in the current settings, lower standard *for them* to this value.
 # Recommended action for restrictive games is to alternate lowering minimum_level and lowered_minimum.
@@ -38,7 +40,7 @@ only_use_best_match_for_player_combination = True
 
 # Set the amount of teams. 7 is probably the max for reasonable computation time.:
 
-teams = 4  # The max for this is probably 7.
+teams = 3  # The max for this is probably 7.
 
 # Determine how negative values are interpreted.
 # A negative value means "I don't want to play this game but I will if I have to".
@@ -259,9 +261,14 @@ def print_single_result(result):
     print("---")
 
 
+lock = threading.Lock()
+
+
 def print_result(cycles):
     global results
     global achievable_score
+
+    lock.acquire()
 
     new_score = get_score(cycles)
 
@@ -274,9 +281,8 @@ def print_result(cycles):
         if print_results_immediately:
             print_single_result((cycles.copy(), new_score))
 
+        lock.release()
         return
-
-    results_a = results
 
     if new_score < results[-1][1]:
         results.pop()
@@ -287,7 +293,8 @@ def print_result(cycles):
 
         results.sort(key=lambda r: r[1])
         achievable_score = results[-1][1]
-        return
+
+    lock.release()
 
 
 def combination_util(arr, data, start,
@@ -317,8 +324,12 @@ def combination_util(arr, data, start,
         if remaining_people != len(ppl_in_remaining_tuples):
             return
 
+    threads = []
+
     while i <= end and end - i + 1 >= r - index:
         if index == 0:
+            if i >= worst_player_count:
+                break
             print(f"{i+1}/{worst_player_count}. Later iterations go faster.")
 
         if arr[i][0] not in remaining_tuples:
@@ -331,9 +342,27 @@ def combination_util(arr, data, start,
             i += 1
             continue
 
-        combination_util(arr, data.copy(), i + 1,
-                         end, index + 1, r)
+        if index == 0:
+            threads.append(multiprocessing.Process(target=combination_util, args=(arr, data.copy(), i + 1, end, index + 1, r)))
+
+            if len(threads) >= 8:
+                for thread in threads:
+                    thread.start()
+
+                for thread in threads:
+                    thread.join()
+
+                threads = []
+        else:
+            combination_util(arr, data.copy(), i + 1,
+                            end, index + 1, r)
         i += 1
+
+    for thread in threads:
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 
 
 def find_cycle_set(cycles, n):
