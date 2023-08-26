@@ -12,7 +12,7 @@ discouraged_games = defaultdict(lambda: 0)
 
 # Thinker with these:
 
-max_difference = 2  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
+max_difference = 3  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
 minimum_level = 2 # The minimum skill level of the worst player of a game. Good value teams: 3. At 5 teams or higher, you might need to lower the value to 2.
 lowered_minimum = 2 # If there is a player that cannot match with anyone in the current settings, lower standard *for them* to this value.
 # Recommended action for restrictive games is to alternate lowering minimum_level and lowered_minimum.
@@ -90,6 +90,7 @@ results_amount = 10
 # The lower this number, the faster the program will go. However, some results may be lost.
 
 multithreading = True
+amount_of_cores = 8
 results_per_thread = 3
 
 
@@ -234,13 +235,17 @@ def balance_teams(result):
 
         best = [(team,) for team in team_dist]
 
-    print("Best teams:")
+    message = "Best teams:\n"
+
     for i, team in enumerate(best):
-        print("Team "
-              + str(i + 1)
-              + ": "
-              + ", ".join([player[0].name + f" on {people_to_games[player[0]]} ({player[1]})" for player in team[0]])
-              + " | Score: " + str(sum([player[1] for player in team[0]])))
+        message += "Team "
+        message += str(i + 1)
+        message += ": "
+        message += ", ".join([player[0].name + f" on {people_to_games[player[0]]} ({player[1]})" for player in team[0]])
+        message += " | Score: " + str(sum([player[1] for player in team[0]]))
+        message += "\n"
+
+    return message
 
 
 def print_combination(arr, n, r):
@@ -260,14 +265,18 @@ def binom(n, k):
 
 
 def print_single_result(result):
+    message = ""
+
     for game in result[0]:
-        print(", ".join([person.name for person in game[0]]) + " playing " + game[
-            1] + ". Compatibility error: " + str(round(game[2])))
-    print("Overall score: " + str(round(result[1])))
+        message += ", ".join([person.name for person in game[0]]) + " playing " + game[
+            1] + ". Compatibility error: " + str(round(game[2])) + "\n"
+    message += "Overall score: " + str(round(result[1])) + "\n"
 
-    balance_teams(result)
+    message += balance_teams(result)
 
-    print("---")
+    message += "---"
+
+    print(message)
 
 
 lock = threading.Lock()
@@ -279,8 +288,11 @@ def print_result(cycles):
     new_score = get_score(cycles)
 
     if len(results) < results_per_thread:
-        # if not len(results):
-        #     print("Found something! If things are taking too long, rerun with 'print_results_immediately = True'.")
+        if not len(results):
+            if multithreading:
+                print("This thread had a hit! If things are taking too long, rerun with 'print_results_immediately = True'.")
+            else:
+                print("Found something! If things are taking too long, rerun with 'print_results_immediately = True'.")
 
         results.append((cycles.copy(), new_score))
 
@@ -321,7 +333,9 @@ def combination_util(arr, data, start,
     remaining_tuples = {tuple[0] for tuple in arr[start:] if not set(tuple[0]) & ppl_so_far}
 
     if not remaining_tuples:
-        return
+        if index == 1 and multithreading:
+            print("Thread ended. This one was dead immediately.")
+        return []
 
     minimum_remaining_score = min(tuple[2] for tuple in arr[start:])
 
@@ -331,7 +345,9 @@ def combination_util(arr, data, start,
         remaining_people = teams * sum(1 for d in data if not d)
 
         if remaining_people != len(ppl_in_remaining_tuples):
-            return
+            if index == 1 and multithreading:
+                print("Thread ended. This one was dead immediately.")
+            return []
 
     threads = []
 
@@ -365,16 +381,21 @@ def combination_util(arr, data, start,
 
     if index == 1 and multithreading:
         new_best_achievable = min(thread_achievable_score.value, achievable_score)
-        print(f"Thread ended. Updating achievable_score to: {new_best_achievable}")
+        if new_best_achievable != thread_achievable_score.value:
+            print(f"Thread ended. Updating achievable_score to: {new_best_achievable}")
+        else:
+            print("Thread ended.")
+
         thread_achievable_score.set(new_best_achievable)
         return results
     if index == 0:
         if multithreading:
             print(f"There are {len(threads)} threads to execute.")
 
-            with multiprocessing.Pool(8) as p:
+            with multiprocessing.Pool(amount_of_cores) as p:
                 multi_results = p.starmap(combination_util, threads)
-            return [j for sub in multi_results for j in sub]
+
+            return [j for sub in multi_results if sub for j in sub]
 
         return results
 
