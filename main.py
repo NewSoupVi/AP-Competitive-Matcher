@@ -486,7 +486,7 @@ def n_matching_experimental(persons, games):
             too_restrictive_players.add(player)
             print(f"With these settings, player {player.name} does not play any game that {teams - 1} other players play.")
 
-    if too_restrictive_players:
+    if too_restrictive_players and minimum_level != lowered_minimum:
         print("As a result, no combinations were found.")
         print("Attempting to lower standard.")
 
