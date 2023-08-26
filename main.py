@@ -85,9 +85,11 @@ perfect_team_balancing = False
 
 results_amount = 10
 
+# Multithreading.
 # Threads do not share info, so they each get a certain amount of results allocated.
 # The lower this number, the faster the program will go. However, some results may be lost.
 
+multithreading = True
 results_per_thread = 3
 
 
@@ -349,23 +351,32 @@ def combination_util(arr, data, start,
             continue
 
         if index == 0:
-            threads.append((arr, data.copy(), i + 1, end, index + 1, r, thread_achievable_score))
+            if multithreading:
+                threads.append((arr, data.copy(), i + 1, end, index + 1, r, thread_achievable_score))
+            else:
+                global results_per_thread
+                results_per_thread = results_amount
+                combination_util(arr, data.copy(), i + 1,
+                            end, index + 1, r, thread_achievable_score)
         else:
             combination_util(arr, data.copy(), i + 1,
                             end, index + 1, r, thread_achievable_score)
         i += 1
 
-    if index == 1:
+    if index == 1 and multithreading:
         new_best_achievable = min(thread_achievable_score.value, achievable_score)
         print(f"Thread ended. Updating achievable_score to: {new_best_achievable}")
         thread_achievable_score.set(new_best_achievable)
         return results
     if index == 0:
-        print(f"There are {len(threads)} threads to execute.")
+        if multithreading:
+            print(f"There are {len(threads)} threads to execute.")
 
-        with multiprocessing.Pool(8) as p:
-            multi_results = p.starmap(combination_util, threads)
-        return [j for sub in multi_results for j in sub]
+            with multiprocessing.Pool(8) as p:
+                multi_results = p.starmap(combination_util, threads)
+            return [j for sub in multi_results for j in sub]
+
+        return results
 
 
 def find_cycle_set(cycles, n):
