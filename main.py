@@ -54,10 +54,11 @@ teams = 3  # The max for this is probably 7.
 
 negative_entry_treatment = -1
 
-# Force two players to be on the same team. Only supports duos at the moment (You can chain them to simulate trios).
-# (This uses some hacky Python lol)
+# Force two players to play different worlds.
+# This can be used to force two players on the same team, but you'll have to balance the teams yourself.
+# Only supports duos at the moment (You can chain them to simulate trios). (This uses some hacky Python lol)
 
-force_same_team = {
+force_different_game = {
     # Example: ("Violet", "Dragorrod"),
 }
 
@@ -188,8 +189,8 @@ def balance_teams(result):
         for possibility in team_dist_list:
             wrong = False
 
-            if force_same_team:
-                for forced_teammates in force_same_team:
+            if force_different_game:
+                for forced_teammates in force_different_game:
                     forced_teammates = set(forced_teammates)
                     for team in possibility:
                         team_set = set(player.name for player, _ in team)
@@ -449,7 +450,7 @@ def generate_tuples(persons, games, problematic_players=frozenset()):
                     problem = True
                     break
 
-                if (person_a.name, person_b.name) in force_same_team or (person_b.name, person_a.name) in force_same_team:
+                if (person_a.name, person_b.name) in force_different_game or (person_b.name, person_a.name) in force_different_game:
                     problem = True
                     break
 
@@ -532,8 +533,8 @@ if __name__ == '__main__':
 
     if not disallowed_combinations:
         disallowed_combinations = set()
-    if not force_same_team:
-        force_same_team = set()
+    if not force_different_game:
+        force_different_game = set()
     if not force_different_team:
         force_different_team = set()
 
