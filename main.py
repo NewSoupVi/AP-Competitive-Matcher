@@ -12,9 +12,9 @@ discouraged_games = defaultdict(lambda: 0)
 
 # Thinker with these:
 
-max_difference = 3  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
+max_difference = 5  # The maximum skill difference between two players of the same game. Good value for two teams: 1. Good value for three teams: 2.
 minimum_level = 3 # The minimum skill level of the worst player of a game. Good value teams: 3. At 5 teams or higher, you might need to lower the value to 2.
-lowered_minimum = 2 # If there is a player that cannot match with anyone in the current settings, lower standard *for them* to this value.
+lowered_minimum_for_restrictive_players_only = 2 # If there is a player that cannot match with anyone in the current settings, lower standard *for them* to this value.
 # Recommended action for restrictive games is to alternate lowering minimum_level and lowered_minimum.
 
 discouraged_games.update({  # Games that should be less likely to show up. This is a flat value added to error.
@@ -70,11 +70,11 @@ force_different_team = {
 # A minimum other than 1 is not currently supported.
 
 force_game_maximum = {
-    # Example: ("Pilot", 1)
+    ("Pilot", 1)
 }
 
 force_game_to_appear = {
-    # Example: "Pilot"
+    "Pilot"
 }
 
 # Will print team combos immediately as they are found. This helps with getting ANY result on a big player count.
@@ -451,7 +451,7 @@ def generate_tuples(persons, games, problematic_players=frozenset()):
             minimum_to_use = minimum_level
 
             if set(tuple[0]) & problematic_players:
-                minimum_to_use = lowered_minimum
+                minimum_to_use = lowered_minimum_for_restrictive_players_only
 
             for combination in itertools.combinations(tuple[0], 2):
                 person_a = combination[0]
@@ -505,7 +505,7 @@ def n_matching_experimental(persons, games):
             too_restrictive_players.add(player)
             print(f"With these settings, player {player.name} does not play any game that {teams - 1} other players play.")
 
-    if too_restrictive_players and minimum_level != lowered_minimum:
+    if too_restrictive_players and minimum_level != lowered_minimum_for_restrictive_players_only:
         print("As a result, no combinations were found.")
         print("Attempting to lower standard.")
 
