@@ -70,11 +70,11 @@ force_different_team = {
 # A minimum other than 1 is not currently supported.
 
 force_game_maximum = {
-    ("Pilot", 1)
+    # Example: ("Pilot", 1),
 }
 
 force_game_to_appear = {
-    "Pilot"
+    # Example: "Pilot",
 }
 
 # Will print team combos immediately as they are found. This helps with getting ANY result on a big player count.
@@ -382,9 +382,9 @@ def combination_util(arr, data, start,
             i += 1
             continue
 
-        for game, max in force_game_maximum:
-            if sum(tuple[1] == game for tuple in data if tuple) > max:
-                continue
+        if any(sum(tuple[1] == game for tuple in data if tuple) > max for game, max in force_game_maximum):
+            i += 1
+            continue
 
         if index == 0:
             if multithreading:
