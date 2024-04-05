@@ -23,8 +23,7 @@ discouraged_games.update({  # Games that should be less likely to show up. This 
     "Slay the Spire": 10,
 })
 completely_disallowed_games = {  # Completely disallow these games. Doing so might increase performance over just setting a really high value above.
-    "ChecksFinder",
-    "Clique",
+    # Example: "ChecksFinder",
 }
 discouraged_combinations = defaultdict(lambda: 0)
 discouraged_combinations.update({
@@ -51,7 +50,7 @@ teams = 3  # The max for this is probably 7.
 # -1 means that game-player combination is now *banned* (eseentially: added to disallowed_combinations).
 # Any positive number means this game-player combination will be added to disallowed_combinations with that value.
 
-negative_entry_treatment = -1
+negative_entry_treatment = 10
 
 # Force two players to play different worlds.
 # This can be used to force two players on the same team, but you'll have to balance the teams yourself.
