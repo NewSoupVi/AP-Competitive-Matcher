@@ -1,4 +1,3 @@
-import copy
 import itertools
 import math
 import multiprocessing
@@ -68,6 +67,16 @@ force_different_team = {
     # Example: ("Violet", "Dragorrod"),
 }
 
+# Force a game to appear at least once, and/or a maximum amount of times.
+# A minimum other than 1 is not currently supported.
+
+force_game_maximum = {
+    # Example: ("Pilot", 1)
+}
+
+force_game_to_appear = {
+    # Example: "Pilot"
+}
 
 # Will print team combos immediately as they are found. This helps with getting ANY result on a big player count.
 # These will look very similar for some time, it will appear to get "stuck" on some idea.
@@ -119,6 +128,9 @@ class Person:
 
     def __init__(self):
         self.games = dict()
+
+    def __str__(self):
+        return f"Player \"{self.name}\""
 
     def get_overlap(self, other):
         best = (math.inf, "")
@@ -222,7 +234,7 @@ def balance_teams(result):
         best = min(team_possibilites_with_scores, key=lambda possibility: max(team[1] for team in possibility) - min(team[1] for team in possibility))
 
     else:
-        team_dist = [[] for i in range(0, len(result[0][0][0]))]
+        team_dist = [[] for _ in range(0, len(result[0][0][0]))]
         for game_and_players in result[0]:
             for index, player in enumerate(game_and_players[0]):
                 team_dist[index].append((player, player.games[game_and_players[1]]))
@@ -324,24 +336,27 @@ def combination_util(arr, data, start,
         achievable_score = thread_achievable_score.value
         print("Starting new thread.")
 
+    ppl_so_far = {item for sublist in data if sublist for item in sublist[0]}
+    remaining_tuples = {tuple for tuple in arr[start:] if not set(tuple[0]) & ppl_so_far}
+
+    if force_game_to_appear:
+        possible_games = {tuple[1] for tuple in data if tuple} | {tuple[1] for tuple in remaining_tuples}
+        for game in force_game_to_appear:
+            if game not in possible_games:
+                return []
+
     if index == r:
         print_result(data)
         return
 
     i = start
 
-    ppl_so_far = {item for sublist in data if sublist for item in sublist[0]}
-
-    remaining_tuples = {tuple[0] for tuple in arr[start:] if not set(tuple[0]) & ppl_so_far}
-
     if not remaining_tuples:
         if index == 1 and multithreading:
             print("Thread ended. This one was dead immediately.")
         return []
 
-    minimum_remaining_score = min(tuple[2] for tuple in arr[start:])
-
-    ppl_in_remaining_tuples = {j for sub in remaining_tuples for j in sub}
+    ppl_in_remaining_tuples = {j for sub in remaining_tuples for j in sub[0]}
 
     if data[0]:
         remaining_people = teams * sum(1 for d in data if not d)
@@ -358,7 +373,7 @@ def combination_util(arr, data, start,
             if i >= worst_player_count:
                 break
 
-        if arr[i][0] not in remaining_tuples:
+        if arr[i] not in remaining_tuples:
             i += 1
             continue
 
@@ -367,6 +382,10 @@ def combination_util(arr, data, start,
         if get_score([x for x in data if x]) > achievable_score:
             i += 1
             continue
+
+        for game, max in force_game_maximum:
+            if sum(tuple[1] == game for tuple in data if tuple) > max:
+                continue
 
         if index == 0:
             if multithreading:
@@ -403,7 +422,6 @@ def combination_util(arr, data, start,
 
 
 def find_cycle_set(cycles, n):
-    combinations = []
     print_combination(cycles, len(cycles), n)
 
 
@@ -457,7 +475,8 @@ def generate_tuples(persons, games, problematic_players=frozenset()):
             if problem:
                 continue
 
-            equivalent_tuple = [tuple2 for tuple2 in possible_tuples if all(person in tuple2[0] for person in tuple[0])]
+            equivalent_tuple = [tuple2 for tuple2 in possible_tuples if all(person in tuple2[0] for person in tuple[0])
+                                if tuple2[1] not in force_game_to_appear]
 
             if only_use_best_match_for_player_combination:
                 if equivalent_tuple:
