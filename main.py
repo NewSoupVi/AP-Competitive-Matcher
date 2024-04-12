@@ -106,7 +106,7 @@ results_per_thread = 3
 # Finally, tinker with the value function:
 
 def get_compatibility_score(game: str, a: int, b: int):
-    if game == "Pilot":
+    if game.lower() == "Pilot":
         return ((a - b)**2) * teams
 
     return abs(a - b)*teams + (5 - min(a, b))**2
