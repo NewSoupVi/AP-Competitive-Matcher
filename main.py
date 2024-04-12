@@ -20,17 +20,16 @@ lowered_minimum_for_restrictive_players_only = 2 # If there is a player that can
 discouraged_games.update({  # Games that should be less likely to show up. This is a flat value added to error.
     "Stardew": 1,
     "VVVVVV": 1,
-    "Slay the Spire": 10,
+    "Slay the Spire": 1,
 })
 completely_disallowed_games = {  # Completely disallow these games. Doing so might increase performance over just setting a really high value above.
-    # Example: "ChecksFinder",
 }
 discouraged_combinations = defaultdict(lambda: 0)
 discouraged_combinations.update({
     # Example: ("Violet", "Timespinner"): 10,
 })
 disallowed_combinations = {
-    # Example: ("Violet", "Stardew"),
+    ("orysk", "SM64"),
 }
 
 # Turn this on for a performance increase (This will only consider the best match for each pair/trio/etc. of players):
@@ -40,7 +39,7 @@ only_use_best_match_for_player_combination = True
 
 # Set the amount of teams. 7 is probably the max for reasonable computation time.:
 
-teams = 3  # The max for this is probably 7.
+teams = 4  # The max for this is probably 7.
 
 # Determine how negative values are interpreted.
 # A negative value means "I don't want to play this game but I will if I have to".
@@ -50,7 +49,7 @@ teams = 3  # The max for this is probably 7.
 # -1 means that game-player combination is now *banned* (eseentially: added to disallowed_combinations).
 # Any positive number means this game-player combination will be added to disallowed_combinations with that value.
 
-negative_entry_treatment = 10
+negative_entry_treatment = 100
 
 # Force two players to play different worlds.
 # This can be used to force two players on the same team, but you'll have to balance the teams yourself.
@@ -106,7 +105,10 @@ results_per_thread = 3
 
 # Finally, tinker with the value function:
 
-def get_compatibility_score(a: int, b: int):
+def get_compatibility_score(game: str, a: int, b: int):
+    if game == "Pilot":
+        return ((a - b)**2) * teams
+
     return abs(a - b)*teams + (5 - min(a, b))**2
 
 
@@ -117,8 +119,8 @@ achievable_score = math.inf
 worst_player_count = math.inf
 
 
-def get_cum_compatibility_score(scores):
-    return sum(get_compatibility_score(c[0], c[1]) for c in itertools.combinations(scores, 2)) / (binom(teams, 2))
+def get_cum_compatibility_score(game, scores):
+    return sum(get_compatibility_score(game, c[0], c[1]) for c in itertools.combinations(scores, 2)) / (binom(teams, 2))
 
 
 class Person:
@@ -147,7 +149,7 @@ class Person:
             if this_score < minimum_level or other.games[game] < minimum_level:
                 continue
 
-            new_candidate = get_compatibility_score(this_score, other.games[game]) + get_discouragement_factor(game, [self, other])
+            new_candidate = get_compatibility_score(game, this_score, other.games[game]) + get_discouragement_factor(game, [self, other])
             if best[0] > new_candidate:
                 best = (new_candidate, game)
 
@@ -434,7 +436,7 @@ def generate_tuples(persons, games, problematic_players=frozenset()):
     for game in games:
         associated_persons = [person for person in persons if game in person.games]
 
-        new_tuples = [(combination, game, get_cum_compatibility_score(person.games[game] for person in combination) + get_discouragement_factor(game, combination))
+        new_tuples = [(combination, game, get_cum_compatibility_score(game, (person.games[game] for person in combination)) + get_discouragement_factor(game, combination))
                       for combination in itertools.combinations(associated_persons, teams)]
 
         valid_tuples = []
@@ -628,7 +630,7 @@ if __name__ == '__main__':
                 score_a = person_a.games[game]
                 score_b = person_b.games[game]
 
-                cum_sum += get_compatibility_score(score_a, score_b) + get_discouragement_factor(game, [person_a, person_b])
+                cum_sum += get_compatibility_score(game, score_a, score_b) + get_discouragement_factor(game, [person_a, person_b])
 
                 favored_person = person_a.name if score_a > score_b else (
                     person_b.name if score_b > score_a else "neither player")
