@@ -109,7 +109,7 @@ def get_compatibility_score(game: str, a: int, b: int):
     if game.lower() == "Pilot":
         return ((a - b)**2) * teams
 
-    return abs(a - b)*teams + (5 - min(a, b))**2
+    return abs(a - b)*teams + (4 - min(4, a, b))**2
 
 
 # Don't touch anything past here unless you know what you're doing!
