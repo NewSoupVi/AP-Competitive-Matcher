@@ -587,7 +587,8 @@ if __name__ == '__main__':
                 try:
                     value = int(value)
                 except:
-                    raise ValueError(f"Couldn't parse {value} as an integer in values.txt for player {new_person.name}")
+                    raise ValueError(f"Couldn't parse {value} as an integer in values.txt"
+                                     f" for player {new_person.name} around game {game_names[i]}.")
 
                 if value < 0:
                     value = abs(value)
