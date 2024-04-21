@@ -565,7 +565,7 @@ if __name__ == '__main__':
 
         for line in file.readlines():
             line_real = line.strip()
-            line_split = line_real.split("\t")
+            line_split = [token.strip() for token in line_real.split("\t")]
             if not line_split:
                 continue
             if line_split[0] == "Discord ID":
@@ -584,7 +584,10 @@ if __name__ == '__main__':
                 if value == "":
                     continue
 
-                value = int(value)
+                try:
+                    value = int(value)
+                except:
+                    raise ValueError(f"Couldn't parse {value} as an integer in values.txt")
 
                 if value < 0:
                     value = abs(value)
