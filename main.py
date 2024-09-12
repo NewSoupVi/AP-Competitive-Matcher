@@ -29,7 +29,6 @@ discouraged_combinations.update({
     # Example: ("Violet", "Timespinner"): 10,
 })
 disallowed_combinations = {
-    ("orysk", "SM64"),
 }
 
 # Turn this on for a performance increase (This will only consider the best match for each pair/trio/etc. of players):
@@ -79,7 +78,7 @@ force_game_to_appear = {
 # Will print team combos immediately as they are found. This helps with getting ANY result on a big player count.
 # These will look very similar for some time, it will appear to get "stuck" on some idea.
 
-print_results_immediately = False
+print_results_immediately = True
 
 
 # If set to True, will use a brute force algorithm to get the best possible team balancing.
