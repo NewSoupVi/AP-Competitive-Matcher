@@ -235,6 +235,9 @@ def balance_teams(result):
 
             team_possibilites_with_scores.append([(team, sum(player[1] for player in team)) for team in possibility])
 
+        if not team_possibilites_with_scores:
+            # No team distribution found for this game combination, usually due to 'force_different_teams'.
+            return ""
         best = min(team_possibilites_with_scores, key=lambda possibility: max(team[1] for team in possibility) - min(team[1] for team in possibility))
 
     else:
@@ -290,7 +293,12 @@ def print_single_result(result):
             1] + ". Compatibility error: " + str(round(game[2])) + "\n"
     message += "Overall score: " + str(round(result[1])) + "\n"
 
-    message += balance_teams(result)
+    addition = balance_teams(result)
+
+    if not addition:
+        return
+
+    message += addition
 
     message += "---"
 
