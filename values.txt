@@ -1,3 +1,5 @@
-Discord ID	Adventure	Clique	DS3	ChecksFinder	The Witness
-Felix	1	5	4	3	3
-PIrate		5		5	3
+Discord ID	Adventure	A Hat in Time	Aquaria	Blasphemous	Bomb Rush Cyberfunk	Bumper Stickers	Castlevania 64	Celeste 64	DS3	DLCQuest	DKC3	DOOM	DOOM II	Factorio	FF1	FF Mystic Quest	Heretic	HK	Hylics 2	KH2	KDL3	Zelda1	ALTTP	LADX	Landstalker	Lingo	Lufia 2	M&L:SS	MMBN3	Meritous	Messenger	Minecraft	Muse Dash	Noita	OOT	Overcooked! 2	Pokemon Emerald	Pokemon RB	Raft	RoR2	Rogue Legacy	S. Evermore	Shivers	A Short Hike	Slay the Spire	SMZ3	SA2B	SC2	Stardew	Subnautica	SM64	SMW	Super Metroid	Terraria	Timespinner	TUNIC	Undertale	VVVVVV	Wargroove	Witness
+NewSoupVi											-1			3									-1			5						2	-3		5	1	2		4		2				5						4	4			3	1	1	3		5
+trenter_tr		4									4												4			3					3				5	3									3		-2				3	5			5			5		5
+RoobyRoo						4		3		2								3				1				3					2				4									3							5				4	5		4		3
+thephar														1									5												5						-5				-3	4					5	3	-3

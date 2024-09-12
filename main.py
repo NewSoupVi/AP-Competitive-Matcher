@@ -624,7 +624,6 @@ if __name__ == '__main__':
 
                 G.add_edge(person_a, person_b, weight=score)
 
-
         best_matching = networkx.min_weight_matching(G)
 
         cum_sum = 0
@@ -634,7 +633,7 @@ if __name__ == '__main__':
             score_a = person_a.games[game]
             score_b = person_b.games[game]
 
-            cum_sum += get_compatibility_score(score_a, score_b) + get_discouragement_factor(game, [person_a, person_b])
+            cum_sum += get_compatibility_score(game, score_a, score_b) + get_discouragement_factor(game, [person_a, person_b])
 
             favored_person = person_a.name if score_a > score_b else (
                 person_b.name if score_b > score_a else "neither player")
