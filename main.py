@@ -317,9 +317,9 @@ def combination_util(arr, data, start,
     ppl_in_remaining_tuples = {j for sub in remaining_tuples for j in sub}
 
     if data[0]:
-        remaining_people = teams * sum(1 for d in data if not d)
+        remaining_spots = teams * sum(1 for d in data if not d)
 
-        if remaining_people != len(ppl_in_remaining_tuples):
+        if remaining_spots > len(ppl_in_remaining_tuples):
             return
 
     while i <= end and end - i + 1 >= r - index:
