@@ -114,6 +114,7 @@ def get_compatibility_score(game: str, a: int, b: int):
 # Don't touch anything past here unless you know what you're doing!
 
 results = []
+all_players = set()
 achievable_score = math.inf
 worst_player_count = math.inf
 
@@ -300,6 +301,12 @@ def print_single_result(result):
 
     message += addition
 
+    global all_players
+    present_players = {person.name for game in result[0] for person in game[0]}
+    missing_players = {player for player in all_players if player not in present_players}
+    if missing_players:
+        message += f"\nThis matchup is missing player(s) {', '.join(missing_players)}.\n"
+
     message += "---"
 
     print(message)
@@ -335,6 +342,11 @@ def print_result(cycles):
 
         results.sort(key=lambda r: r[1])
         achievable_score = results[-1][1]
+
+
+def setup_people(people):
+    global all_players
+    all_players.update(people)
 
 
 def combination_util(arr, data, start,
@@ -425,7 +437,7 @@ def combination_util(arr, data, start,
         if multithreading:
             print(f"There are {len(threads)} threads to execute.")
 
-            with multiprocessing.Pool(amount_of_cores) as p:
+            with multiprocessing.Pool(amount_of_cores, initializer=setup_people, initargs=(all_players,)) as p:
                 multi_results = p.starmap(combination_util, threads)
 
             return [j for sub in multi_results if sub for j in sub]
@@ -613,6 +625,12 @@ if __name__ == '__main__':
                 new_person.games[game_names[i]] = value
 
             persons.append(new_person)
+
+    if len(persons) % teams:
+        print(f"The amount of players ({len(persons)}) is not divisible by the amount of teams ({teams}).")
+        print(f"The optimal results will still be attempted to be found, but it will be missing {len(persons) % teams} players.")
+
+    all_players.update([person.name for person in persons])
 
     if teams == 2:
         print("For team size 2, the regular algorithm might take very long to complete. But, 2-matching is actually a solvable (P) problem where it is easy to get the singular best answer. That answer is this:")
