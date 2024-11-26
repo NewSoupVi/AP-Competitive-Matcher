@@ -59,6 +59,8 @@ class Playing:
         self.proficiency = abs(self.player.game_proficiencies[self.game])
 
     def __lt__(self, other: "Playing") -> bool:
+        if self.proficiency == other.proficiency:
+            return self.player < other.player
         return self.proficiency < other.proficiency
 
 
