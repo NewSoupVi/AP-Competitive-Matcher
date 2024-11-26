@@ -18,8 +18,8 @@ Sam (4) and Tim (4) can play Chess (Error term: 0.0). Alternative: Poker (-3/-1)
 Lily (4) and Paul (4) can play Bridge (Error term: 0.0). Alternative: Go (2/5)
 
 Optimally balanced teams:
-Team 1: Anna (4), Tim (4) and Paul (4) - Overall proficiency: 12.
-Team 2: Kevin (4), Sam (4) and Lily (4) - Overall proficiency: 12.
+Team 1: Anna (4), Sam (4) and Lily (4) - Overall proficiency: 12.
+Team 2: Kevin (4), Tim (4) and Paul (4) - Overall proficiency: 12.
 ```
 
 ## Running your own matching
