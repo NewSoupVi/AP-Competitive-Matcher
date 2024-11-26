@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 from typing import Any
 
-from algorithms.balancing import BalancedMatchup
+from algorithms.balancing import BalancedMatchup, balance_match
 from algorithms.players import OverlapSet
 
 
@@ -71,3 +71,16 @@ def output_balancing(balancing: BalancedMatchup) -> None:
             print("\nYou may be able to achieve a better balance by choosing alternate games.")
         elif not balancing.optimal_balancing:
             print("\nYou may be able to achieve a better balance by swapping players.")
+
+
+def balance_and_output_match(match: list[OverlapSet]) -> None:
+    print("")
+
+    output_match(match)
+
+    print("")
+
+    balancing = balance_match(match)
+    output_balancing(balancing)
+
+    print("\n---")
