@@ -14,10 +14,10 @@ OTHER_VALUES_FILES = []
 MAX_SCORE = 5
 
 # The lowest score in your scoring system that is still considered "good at the game".
-GOOD_SCORE = 8
+GOOD_SCORE = 4
 
 # The lowest score that you want to allow for matching at all
-MIN_PROFICIENCY = 2
+MIN_PROFICIENCY = 0
 
 # A negative sign on a score means "I don't want to play this game".
 NEGATIVE_ENTRY_TREATMENT = 100
