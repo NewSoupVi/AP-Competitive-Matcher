@@ -8,7 +8,7 @@ class Team:
     players_playing_games: list[Playing] = field(default_factory=lambda: [])
     overall_proficiency: int = 0
 
-    def __lt__(self, other: "Team"):
+    def __lt__(self, other: "Team") -> bool:
         return self.overall_proficiency < other.overall_proficiency
 
 

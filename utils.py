@@ -14,7 +14,7 @@ def human_readable_list(strings: Iterable[Any]) -> str:
     return f"{', '.join(strings_list[:-1])} and {strings_list[-1]}"
 
 
-def output_match(match: list[OverlapSet]):
+def output_match(match: list[OverlapSet]) -> None:
     print(f"Found matchup with overall error term {sum(overlap_set.best_score for overlap_set in match)}.\n")
     for overlap_set in match:
         best_overlap = overlap_set.best_overlap
@@ -43,7 +43,7 @@ def output_match(match: list[OverlapSet]):
         print(output_string)
 
 
-def output_balancing(balancing: BalancedMatchup):
+def output_balancing(balancing: BalancedMatchup) -> None:
     if balancing.even:
         print("Optimally balanced teams:")
     elif balancing.optimal_balancing:

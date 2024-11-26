@@ -48,12 +48,12 @@ class Player:
 class Playing:
     player: Player
     game: str
-    proficiency: float = 0
+    proficiency: int = 0
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.proficiency = abs(self.player.game_proficiencies[self.game])
 
-    def __lt__(self, other: "Playing"):
+    def __lt__(self, other: "Playing") -> bool:
         return self.proficiency < other.proficiency
 
 
