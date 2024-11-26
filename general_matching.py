@@ -3,10 +3,10 @@ from collections import Counter as CounterType
 
 from tqdm import tqdm
 
-from balancing import balance_match
-from matching_alg import NoValidMatchupsError, find_matches
-from players import ALL_PLAYERS_BY_NAME, Player, get_all_overlaps
-from utils import output_balancing, output_match
+from algorithms.balancing import balance_match
+from algorithms.matching_alg import NoValidMatchupsError, find_matches
+from algorithms.players import ALL_PLAYERS_BY_NAME, Player, get_all_overlaps
+from algorithms.utils import output_balancing, output_match
 
 # Set PLAYERS to ALL_PLAYERS_BY_NAME if your values.txt already only contains the players you want
 PLAYERS = ALL_PLAYERS_BY_NAME
