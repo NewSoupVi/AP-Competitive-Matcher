@@ -1,0 +1,7 @@
+Discord ID	Bridge	Chess	Go	Mahjong	Poker
+Anna			3	4	3
+Kevin	3	-1		4	5
+Lily	4		2
+Paul	4	5	5	3	2
+Sam		4			-3
+Tim		4		2	-1
