@@ -8,7 +8,7 @@ from algorithms.players import ALL_PLAYERS_BY_NAME, OverlapSet, Player, get_all_
 try:
     from tqdm import tqdm
 except ImportError:
-    def tqdm(iterable, **kwargs):
+    def tqdm(iterable, **_):
         return iter(iterable)
 
 
