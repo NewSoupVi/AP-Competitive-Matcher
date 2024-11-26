@@ -6,7 +6,7 @@ from tqdm import tqdm
 from balancing import balance_match
 from matching_alg import NoValidMatchupsError, find_matches
 from players import ALL_PLAYERS_BY_NAME, Player, get_all_overlaps
-from utils import output_match, output_balancing
+from utils import output_balancing, output_match
 
 # Set PLAYERS to ALL_PLAYERS_BY_NAME if your values.txt already only contains the players you want
 PLAYERS = ALL_PLAYERS_BY_NAME

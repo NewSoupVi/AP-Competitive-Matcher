@@ -2,7 +2,6 @@ import re
 from collections import Counter
 from collections.abc import Collection, Iterable
 from dataclasses import dataclass, field
-from functools import cached_property
 from itertools import combinations
 from logging import warning
 from math import comb

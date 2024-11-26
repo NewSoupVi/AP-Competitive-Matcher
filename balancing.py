@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field
 
-from players import OverlapSet, Player, Playing
-
-Team = list[Player]
+from players import OverlapSet, Playing
 
 
 @dataclass
