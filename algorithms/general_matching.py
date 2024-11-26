@@ -4,7 +4,7 @@ from typing import Iterable
 
 from tqdm import tqdm
 
-from algorithms.matching_alg import find_matches
+from algorithms.matching_alg import NoValidMatchupsError, find_matches
 from algorithms.players import ALL_PLAYERS_BY_NAME, OverlapSet, Player, get_all_overlaps
 
 
@@ -23,7 +23,10 @@ def general_matching(player_names: Iterable[str], teams: int) -> list[list[Overl
             overlap_count_per_player[player] += 1
 
     missing = set(players) - set(overlap_count_per_player)
-    assert not missing, f"There is a player who doesn't play the same game as {teams - 1} other players: {missing}"
+    if missing:
+        raise NoValidMatchupsError(
+            f"There is a player who doesn't play the same game as {teams - 1} other players: {missing}"
+        )
 
     sorted_players = sorted(players)
     sorted_players.sort(key=lambda p: overlap_count_per_player[p])
