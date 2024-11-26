@@ -11,11 +11,11 @@ The AP Competitive Matcher is a tool that's built to find matchups for multiworl
 You should get an output that ends with this:
 
 ```
-Found matchup with overall error term 12.0.
+Found matchup with overall error term 0.0.
 
-Anna (4) and Kevin (4) can play Mahjong (Error term: 4.0). Alternative: Poker (3/5)
-Sam (4) and Tim (4) can play Chess (Error term: 4.0).
-Lily (4) and Paul (4) can play Bridge (Error term: 4.0). Alternative: Go (2/5)
+Anna (4) and Kevin (4) can play Mahjong (Error term: 0.0). Alternative: Poker (3/5)
+Sam (4) and Tim (4) can play Chess (Error term: 0.0). Alternative: Poker (-3/-1)
+Lily (4) and Paul (4) can play Bridge (Error term: 0.0). Alternative: Go (2/5)
 
 Optimally balanced teams:
 Team 1: Anna (4), Tim (4) and Paul (4) - Overall proficiency: 12.
