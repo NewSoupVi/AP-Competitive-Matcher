@@ -8,6 +8,9 @@ from math import comb
 from multiprocessing import current_process
 from typing import NamedTuple
 
+import config
+from algorithms.constants import AUTO_GOOD_SCORE, AUTO_MAX_SCORE
+
 try:
     from tqdm import tqdm
 except ImportError:
@@ -253,3 +256,12 @@ def get_all_overlaps(
 
 if not re.match(r".*-\d+", current_process().name):
     populate_from_values()
+
+    if config.MAX_SCORE == AUTO_MAX_SCORE:
+        config.MAX_SCORE = max(
+            max(abs(proficiency) for proficiency in player.game_proficiencies.values())
+            for player in ALL_PLAYERS_BY_NAME.values()
+        )
+
+    if config.GOOD_SCORE == AUTO_GOOD_SCORE:
+        config.GOOD_SCORE = round(config.MAX_SCORE / 5 * 3.7)

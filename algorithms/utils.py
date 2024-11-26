@@ -4,6 +4,8 @@ from typing import Any
 from algorithms.balancing import BalancedMatchup, balance_match
 from algorithms.players import OverlapSet
 
+AUTO = -1
+
 
 def human_readable_list(strings: Iterable[Any]) -> str:
     strings_list = list(strings)

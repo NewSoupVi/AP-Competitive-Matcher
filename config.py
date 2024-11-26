@@ -1,5 +1,7 @@
 from collections.abc import Collection
 
+from algorithms.constants import AUTO_GOOD_SCORE, AUTO_MAX_SCORE
+
 # Path to file containing player proficiencies. This one must (at minimum) contain every player that you want to match.
 MAIN_VALUES_FILE = "values.txt"
 
@@ -10,11 +12,13 @@ OTHER_VALUES_FILES = []
 #  Scoring Parameters  #
 ########################
 
-# The highest achievable score in your scoring system
-MAX_SCORE = 5
+# The highest achievable score in your scoring system.
+# Use "AUTO" to automatically determine this.
+MAX_SCORE = AUTO_MAX_SCORE
 
 # The lowest score in your scoring system that is still considered "good at the game".
-GOOD_SCORE = 4
+# Use "AUTO" to automatically determine this.
+GOOD_SCORE = AUTO_GOOD_SCORE
 
 # The lowest score that you want to allow for matching at all
 MIN_PROFICIENCY = 0
