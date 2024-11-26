@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from players import OverlapSet, Playing
+from algorithms.players import OverlapSet, Playing
 
 
 @dataclass

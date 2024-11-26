@@ -8,8 +8,8 @@ from typing import NamedTuple, Optional
 
 from tqdm import tqdm
 
+from algorithms.players import OverlapSet, Player
 from config import CROSS_THREAD_ACHIEVABLE_SCORE, MAX_RESULTS, MIN_THREAD_COUNT, RESULTS_PER_THREAD, USE_MULTIPROCESSING
-from players import OverlapSet, Player
 
 SimpleOverlapRepresentation = tuple[int, float]
 

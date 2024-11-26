@@ -1,8 +1,8 @@
 from collections.abc import Iterable
 from typing import Any
 
-from balancing import BalancedMatchup
-from players import OverlapSet
+from algorithms.balancing import BalancedMatchup
+from algorithms.players import OverlapSet
 
 
 def human_readable_list(strings: Iterable[Any]) -> str:
