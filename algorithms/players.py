@@ -8,7 +8,12 @@ from math import comb
 from multiprocessing import current_process
 from typing import NamedTuple
 
-from tqdm import tqdm
+try:
+    from tqdm import tqdm
+except ImportError:
+    def tqdm(iterable, **kwargs):
+        return iter(iterable)
+
 
 from config import (
     MAIN_VALUES_FILE,
@@ -240,7 +245,7 @@ def get_all_overlaps(
 
     tuples_gen = (OverlapSet(set(player_tuple)) for player_tuple in tuples_to_use)
     all_overlaps = list(tqdm(tuples_gen, total=total_size, desc="Getting all overlaps"))
-    filter_gen =  tqdm(all_overlaps, total=total_size, desc="Discarding empty overlaps")
+    filter_gen = tqdm(all_overlaps, total=total_size, desc="Discarding empty overlaps")
     return [overlap for overlap in filter_gen if not overlap.empty]
 
 

@@ -2,10 +2,14 @@ from collections import Counter
 from collections import Counter as CounterType
 from typing import Iterable
 
-from tqdm import tqdm
-
 from algorithms.matching_alg import NoValidMatchupsError, find_matches
 from algorithms.players import ALL_PLAYERS_BY_NAME, OverlapSet, Player, get_all_overlaps
+
+try:
+    from tqdm import tqdm
+except ImportError:
+    def tqdm(iterable, **kwargs):
+        return iter(iterable)
 
 
 def general_matching(player_names: Iterable[str], teams: int) -> list[list[OverlapSet]]:
