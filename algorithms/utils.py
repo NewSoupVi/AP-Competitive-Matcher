@@ -1,6 +1,7 @@
 from collections.abc import Iterable
 from typing import Any
 
+import config
 from algorithms.balancing import BalancedMatchup, balance_match
 from algorithms.players import OverlapSet
 
@@ -38,7 +39,10 @@ def output_match(match: list[OverlapSet]) -> None:
             else:
                 output_string += " Alternatives: "
             output_string += human_readable_list(
-                f"{overlap.game_name} ({'/'.join(str(p.game_proficiencies[overlap.game_name]) for p in players)})"
+                (
+                    f"{overlap.game_name} ({'/'.join(str(p.game_proficiencies[overlap.game_name]) for p in players)}"
+                    f"{' DISCOURAGED' if config.DISCOURAGED_GAMES.get(overlap.game_name, 0) > 0 else ''})"
+                )
                 for overlap in other_overlaps
             )
 

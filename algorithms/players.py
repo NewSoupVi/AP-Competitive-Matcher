@@ -76,7 +76,11 @@ class SingleOverlap(NamedTuple):
     def build(players: Iterable[Player], game_name: str) -> "SingleOverlap":
         game_scores = [player.game_proficiencies[game_name] for player in players]
         individual_scores = [
-            score_function(abs(score_a), abs(score_b)) + NEGATIVE_ENTRY_TREATMENT * (score_a < 0 or score_b < 0)
+            (
+                score_function(abs(score_a), abs(score_b))
+                + NEGATIVE_ENTRY_TREATMENT * (score_a < 0 or score_b < 0)
+                + config.DISCOURAGED_GAMES.get(game_name, 0)
+            )
             for score_a, score_b in combinations(game_scores, 2)
         ]
         final_score = individual_scores_to_tuple_score(individual_scores)
@@ -161,6 +165,9 @@ def get_players_from_values_file(filename: str) -> dict[str, Player]:
         game_proficiencies_as_strings = dict(zip(ALL_GAMES, line_split[1:]))
         game_proficiencies_as_ints = {}
         for game_name, score_string in game_proficiencies_as_strings.items():
+            if game_name in config.BANNED_GAMES:
+                continue
+
             score_string = score_string.strip()
             if not score_string:
                 continue

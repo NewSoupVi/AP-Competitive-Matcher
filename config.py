@@ -42,6 +42,24 @@ def individual_scores_to_tuple_score(scores: Collection[float]) -> float:
     return sum(scores) / len(scores)
 
 
+#####################
+# Game Picks / Bans #
+#####################
+
+# Ban these games from showing up in matchings.
+BANNED_GAMES = {
+    # "Clique",
+    # "OSRS",
+}
+
+# Make these games less likely to show up, determined by the specified penalty score.
+# Can also use negative values to make a game more likely to show up.
+DISCOURAGED_GAMES = {
+    # "Slay the Spire": 5,
+    # "DLCQuest": 10,
+}
+
+
 ###############
 # Performance #
 ###############
