@@ -53,12 +53,12 @@ class MultiProcessingInput:
 
 
 def combination_util(
-        array: list[int],
-        remaining_overlaps: list[SimpleOverlapRepresentation],
-        used_players: int,
-        i: int,
-        current_score: float,
-        combination_data: CombinationData
+    array: list[int],
+    remaining_overlaps: list[SimpleOverlapRepresentation],
+    used_players: int,
+    i: int,
+    current_score: float,
+    combination_data: CombinationData,
 ) -> None:
     if i == -1:
         results = combination_data.results
@@ -99,7 +99,7 @@ def combination_util_wrapper(multiprocessing_input: MultiProcessingInput) -> Com
         multiprocessing_input.remaining_tuples,
         multiprocessing_input.starting_index,
         multiprocessing_input.current_score,
-        combination_data
+        combination_data,
     )
 
     if multiprocessing_input.cross_thread_achievable_score_value is not None:
@@ -111,7 +111,7 @@ def combination_util_wrapper(multiprocessing_input: MultiProcessingInput) -> Com
 
 
 def multiprocessing_mode(matching_config: MatchingConfig) -> list[Result]:
-    needed_players = sum(2 ** n for n in range(len(matching_config.players)))
+    needed_players = sum(2**n for n in range(len(matching_config.players)))
 
     presets = []
     k = -1
@@ -143,7 +143,7 @@ def multiprocessing_mode(matching_config: MatchingConfig) -> list[Result]:
                 matching_config.team_size - 2 - k,
                 overall_score,
                 needed_players,
-                achievable_score
+                achievable_score,
             )
         )
 
@@ -155,12 +155,12 @@ def multiprocessing_mode(matching_config: MatchingConfig) -> list[Result]:
 
 
 def regular_mode(matching_config: MatchingConfig) -> list[Result]:
-    needed_players = sum(2 ** n for n in range(len(matching_config.players)))
+    needed_players = sum(2**n for n in range(len(matching_config.players)))
     combination_data = CombinationData(MAX_RESULTS, needed_players)
     starting_array = [0] * matching_config.team_size
     all_tuples = matching_config.all_overlap_simple_representations
 
-    combination_util(starting_array, all_tuples,0, len(starting_array) - 1, 0, combination_data)
+    combination_util(starting_array, all_tuples, 0, len(starting_array) - 1, 0, combination_data)
 
     return combination_data.results
 
@@ -184,11 +184,9 @@ def make_matching_config(players: list[Player], overlaps: list[OverlapSet]) -> M
 
     indices = {player: index for index, player in enumerate(players)}
 
-    overlap_lookup = {
-        sum(2 ** indices[player] for player in overlap.players): overlap for overlap in overlaps
-    }
+    overlap_lookup = {sum(2 ** indices[player] for player in overlap.players): overlap for overlap in overlaps}
     simple_representations = [
-        (sum(2**indices[player] for player in overlap.players), overlap.best_score) for overlap in overlaps
+        (sum(2 ** indices[player] for player in overlap.players), overlap.best_score) for overlap in overlaps
     ]
 
     return MatchingConfig(amount_of_teams, team_size, players, overlap_lookup, simple_representations)

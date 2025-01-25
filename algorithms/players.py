@@ -14,6 +14,7 @@ from algorithms.constants import AUTO_GOOD_SCORE, AUTO_MAX_SCORE
 try:
     from tqdm import tqdm
 except ImportError:
+
     def tqdm(iterable, **_):
         return iter(iterable)
 
@@ -227,9 +228,9 @@ def populate_from_values() -> None:
 
 
 def get_all_overlaps(
-        players: Iterable[Player | str] | None = None,
-        preset_tuples: Collection[tuple[Player, ...]] | None = None,
-        tuple_size: int | None = 2
+    players: Iterable[Player | str] | None = None,
+    preset_tuples: Collection[tuple[Player, ...]] | None = None,
+    tuple_size: int | None = 2,
 ) -> list[OverlapSet]:
     if players is not None and preset_tuples is not None:
         ValueError("Can't specify both preset_tuples and players.")

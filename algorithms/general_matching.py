@@ -1,6 +1,6 @@
 from collections import Counter
 from collections import Counter as CounterType
-from typing import Iterable
+from collections.abc import Iterable
 
 from algorithms.matching_alg import NoValidMatchupsError, find_matches
 from algorithms.players import ALL_PLAYERS_BY_NAME, OverlapSet, Player, get_all_overlaps
@@ -8,6 +8,7 @@ from algorithms.players import ALL_PLAYERS_BY_NAME, OverlapSet, Player, get_all_
 try:
     from tqdm import tqdm
 except ImportError:
+
     def tqdm(iterable, **_):
         return iter(iterable)
 

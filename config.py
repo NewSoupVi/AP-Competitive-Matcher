@@ -30,9 +30,9 @@ NEGATIVE_ENTRY_TREATMENT = 100
 # This is the function that determines how good a match-up is between two players of the same game.
 # By default, it heavily punishes difference in score, but also punishes low scores in general.
 def score_function(score_a, score_b) -> float:
-    difference_error = abs(score_a - score_b)**2
+    difference_error = abs(score_a - score_b) ** 2
     flat_difference_penalty = (score_a != score_b) * 4
-    overall_player_skill_error = (GOOD_SCORE - min(GOOD_SCORE, score_a, score_b))
+    overall_player_skill_error = GOOD_SCORE - min(GOOD_SCORE, score_a, score_b)
     return difference_error + flat_difference_penalty + overall_player_skill_error
 
 
