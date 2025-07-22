@@ -149,7 +149,7 @@ def get_players_from_values_file(filename: str) -> dict[str, Player]:
 
     player_lines = []
     with open(filename) as values:
-        first_line = values.readline().strip()
+        first_line = values.readline().rstrip()
         ALL_GAMES.extend(first_line.split("\t")[1:])
 
         for line in values:
