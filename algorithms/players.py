@@ -156,6 +156,8 @@ def get_players_from_values_file(filename: str) -> dict[str, Player]:
             line = line.strip()
             if not line:
                 continue
+            if line.startswith("Counts\t"):
+                continue
 
             player_lines.append(line)
 
