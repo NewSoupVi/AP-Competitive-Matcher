@@ -3,7 +3,8 @@ from typing import Any
 
 import config
 from algorithms.balancing import BalancedMatchup, balance_match
-from algorithms.players import OverlapSet
+from algorithms.players import MatchupWithSetGames, OverlapSet
+from algorithms.team_balancing import TeamMatchup
 
 AUTO = -1
 
@@ -15,6 +16,16 @@ def human_readable_list(strings: Iterable[Any]) -> str:
     if len(strings_list) == 1:
         return strings_list[0]
     return f"{', '.join(strings_list[:-1])} and {strings_list[-1]}"
+
+
+def output_matchup_with_set_games(matchup_with_set_games: MatchupWithSetGames, mention_games: bool = False) -> None:
+    for i, team in enumerate(matchup_with_set_games.teams):
+        player_string = human_readable_list(
+            f"{playing.player.name} ({f'{playing.game}, ' if mention_games else ''}{playing.proficiency})"
+            for playing in team.players_playing_games
+        )
+
+        print(f"Team {i + 1}: {player_string} - Overall proficiency: {team.overall_proficiency}.")
 
 
 def output_match(match: list[OverlapSet]) -> None:
@@ -63,12 +74,7 @@ def output_balancing(balancing: BalancedMatchup) -> None:
         else:
             print("One way to balance the teams:")
 
-    for i, team in enumerate(balancing.teams):
-        player_string = human_readable_list(
-            f"{playing.player.name} ({playing.proficiency})" for playing in team.players_playing_games
-        )
-
-        print(f"Team {i + 1}: {player_string} - Overall proficiency: {team.overall_proficiency}.")
+    output_matchup_with_set_games(balancing)
 
     if not balancing.even:
         if balancing.alternate_games and not balancing.optimal_balancing:
@@ -88,5 +94,27 @@ def balance_and_output_match(match: list[OverlapSet]) -> None:
 
     balancing = balance_match(match)
     output_balancing(balancing)
+
+    print("\n---")
+
+
+def output_preset_team_match(team_matchup: TeamMatchup) -> None:
+    print(f"\nFound matchup with overall error term {team_matchup.team_matchup_score}.\n")
+    print(f"Cumulative individual game matchup error term: {team_matchup.regular_score}")
+    print(f"Balance error term: {team_matchup.proficiency_difference_score}\n")
+
+    for overlap in team_matchup.overlaps:
+        players = overlap.players
+        game_name = overlap.game_name
+
+        players_string = human_readable_list(
+            f"{player.name} ({player.game_proficiencies[game_name]})" for player in players
+        )
+
+        print(f"{players_string} can play {game_name} (Error term: {overlap.score}).")
+
+    print("")
+
+    output_matchup_with_set_games(team_matchup, mention_games=True)
 
     print("\n---")

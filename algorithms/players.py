@@ -2,6 +2,7 @@ import re
 from collections import Counter
 from collections.abc import Collection, Iterable
 from dataclasses import dataclass, field
+from functools import cached_property
 from itertools import combinations
 from logging import warning
 from math import comb
@@ -66,6 +67,23 @@ class Playing:
         if self.proficiency == other.proficiency:
             return self.player < other.player
         return self.proficiency < other.proficiency
+
+
+@dataclass
+class TeamWithSetGames:
+    players_playing_games: list[Playing] = field(default_factory=lambda: [])
+
+    def __lt__(self, other: "TeamWithSetGames") -> bool:
+        return self.overall_proficiency < other.overall_proficiency
+
+    @cached_property
+    def overall_proficiency(self) -> int:
+        return sum(playing.proficiency for playing in self.players_playing_games)
+
+
+@dataclass(frozen=True)
+class MatchupWithSetGames:
+    teams: list[TeamWithSetGames]
 
 
 class SingleOverlap(NamedTuple):
@@ -154,9 +172,7 @@ def get_players_from_values_file(filename: str) -> dict[str, Player]:
 
         for line in values:
             line = line.strip()
-            if not line:
-                continue
-            if line.startswith("Counts\t"):
+            if not line or line.startswith("Counts\t"):
                 continue
 
             player_lines.append(line)

@@ -60,6 +60,32 @@ DISCOURAGED_GAMES = {
 }
 
 
+#################
+# Team Matching #
+#################
+
+
+# This function determines how good a matchup is depending on the proficiency difference between two teams.
+# For example, how good of a matchup is 13 total proficiency (5/5/3) vs 12 total proficiency (4/4/4)
+def team_proficiency_difference_score_function(score_a: int, score_b: int) -> float:
+    return abs(score_a - score_b) ** 2
+
+
+# This function determines how N vs N team matchups are combined into a single N vs N vs N vs... score.
+# By default, this is just the average.
+def team_proficiency_difference_scores_to_tuple_score(scores: Collection[float]) -> float:
+    return sum(scores) / len(scores)
+
+
+# How much the overall team proficiency difference should impact whether a matchup is considered good
+# (versus the niceness of the matchup in terms of individual 1v1v1 matchups)
+TEAM_PROFICIENCY_DIFFERENCE_FACTOR = 2
+
+
+# How many game matchups to output for a team matchup
+MAX_TEAM_RESULTS = 10
+
+
 ###############
 # Performance #
 ###############

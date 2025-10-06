@@ -1,20 +1,11 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from algorithms.players import OverlapSet, Playing
-
-
-@dataclass
-class Team:
-    players_playing_games: list[Playing] = field(default_factory=lambda: [])
-    overall_proficiency: int = 0
-
-    def __lt__(self, other: "Team") -> bool:
-        return self.overall_proficiency < other.overall_proficiency
+from algorithms.players import MatchupWithSetGames, OverlapSet, Playing, TeamWithSetGames
 
 
 @dataclass(frozen=True)
-class BalancedMatchup:
-    teams: list[Team]
+class BalancedMatchup(MatchupWithSetGames):
+    teams: list[TeamWithSetGames]
     optimal_balancing: bool
     alternate_games: bool
 
@@ -31,7 +22,7 @@ class BalancedMatchup:
 def greedy_matching(match: list[OverlapSet]) -> BalancedMatchup:
     assert match, "Tried to balance an empty match"
 
-    teams = [Team() for _ in range(len(match[0].players))]
+    teams = [TeamWithSetGames() for _ in range(len(match[0].players))]
 
     unbalanced_overlap_count = 0
 
@@ -54,7 +45,6 @@ def greedy_matching(match: list[OverlapSet]) -> BalancedMatchup:
 
         for team, next_player in zip(teams, next_players):
             team.players_playing_games.append(next_player)
-            team.overall_proficiency += next_player.proficiency
 
     return BalancedMatchup(teams, unbalanced_overlap_count <= 2, alternate_games)
 
