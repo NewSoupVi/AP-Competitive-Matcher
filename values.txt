@@ -1,4 +1,4 @@
-Discord ID	Bridge	Chess	Go	Mahjong	Poker
+Discord ID	Bridge	Chess	Go	Uno	Poker
 Anna			3	5	3
 Kevin		4		2	-1
 Lily	4		2		
