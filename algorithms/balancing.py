@@ -49,5 +49,10 @@ def greedy_matching(match: list[OverlapSet]) -> BalancedMatchup:
     return BalancedMatchup(teams, unbalanced_overlap_count <= 2, alternate_games)
 
 
+def sorted_greedy_matching(match: list[OverlapSet]) -> BalancedMatchup:
+    match_sorted_descending_by_range = sorted(match, key=lambda overlap: overlap.best_overlap.range, reverse=True)
+    return greedy_matching(match_sorted_descending_by_range)
+
+
 def balance_match(match: list[OverlapSet]) -> BalancedMatchup:
-    return greedy_matching(match)
+    return sorted_greedy_matching(match)

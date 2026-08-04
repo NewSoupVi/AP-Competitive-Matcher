@@ -2,7 +2,6 @@ import re
 from collections import Counter
 from collections.abc import Collection, Iterable
 from dataclasses import dataclass, field
-from functools import cached_property
 from itertools import combinations
 from logging import warning
 from math import comb
@@ -76,7 +75,7 @@ class TeamWithSetGames:
     def __lt__(self, other: "TeamWithSetGames") -> bool:
         return self.overall_proficiency < other.overall_proficiency
 
-    @cached_property
+    @property
     def overall_proficiency(self) -> int:
         return sum(playing.proficiency for playing in self.players_playing_games)
 
@@ -113,6 +112,12 @@ class SingleOverlap(NamedTuple):
             for player1, player2 in combinations(self.players, 2)
         ]
         return Counter(gaps)
+
+    @property
+    def range(self) -> int:
+        best = max(player.game_proficiencies[self.game_name] for player in self.players)
+        worst = min(player.game_proficiencies[self.game_name] for player in self.players)
+        return best - worst
 
     def __repr__(self) -> str:
         return f"SingleOverlap<({', '.join(player.name for player in self.players)}), {self.game_name}, {self.score}>"
