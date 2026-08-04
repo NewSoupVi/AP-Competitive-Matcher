@@ -14,7 +14,7 @@ def human_readable_list(strings: Iterable[Any]) -> str:
     if len(strings_list) == 0:
         return ""
     if len(strings_list) == 1:
-        return strings_list[0]
+        return str(strings_list[0])
     return f"{', '.join(strings_list[:-1])} and {strings_list[-1]}"
 
 

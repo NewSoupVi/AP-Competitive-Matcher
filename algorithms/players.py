@@ -1,24 +1,16 @@
+import math
 import re
 from collections import Counter
-from collections.abc import Collection, Iterable
+from collections.abc import Collection, Iterable, Iterator
 from dataclasses import dataclass, field
 from itertools import combinations
 from logging import warning
 from math import comb
 from multiprocessing import current_process
-from typing import NamedTuple
+from typing import Any, NamedTuple, TypeVar
 
 import config
 from algorithms.constants import AUTO_GOOD_SCORE, AUTO_MAX_SCORE
-
-try:
-    from tqdm import tqdm
-except ImportError:
-
-    def tqdm(iterable, **_):
-        return iter(iterable)
-
-
 from config import (
     MAIN_VALUES_FILE,
     MIN_PROFICIENCY,
@@ -27,6 +19,15 @@ from config import (
     individual_scores_to_tuple_score,
     score_function,
 )
+
+T = TypeVar("T")
+
+try:
+    from tqdm import tqdm
+except ImportError:
+
+    def tqdm(iterable: Iterable[T], **_: dict[str, Any]) -> Iterator[T]:
+        return iter(iterable)
 
 
 @dataclass
@@ -154,6 +155,15 @@ class OverlapSet:
     @property
     def empty(self) -> bool:
         return not self.individual_overlaps
+
+    @property
+    def range_of_best_overlap_or_inf_if_no_overlaps(self) -> int | float:
+        best_overlap = self.best_overlap
+
+        if best_overlap is None:
+            return math.inf
+
+        return best_overlap.range
 
     def __repr__(self) -> str:
         player_names = {", ".join(player.name for player in self.players)}
