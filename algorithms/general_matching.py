@@ -1,15 +1,18 @@
 from collections import Counter
 from collections import Counter as CounterType
-from collections.abc import Iterable
+from collections.abc import Collection, Iterable, Iterator
+from typing import Any, TypeVar
 
 from algorithms.matching_alg import NoValidMatchupsError, find_matches
 from algorithms.players import ALL_PLAYERS_BY_NAME, OverlapSet, Player, get_all_overlaps
+
+T = TypeVar("T")
 
 try:
     from tqdm import tqdm
 except ImportError:
 
-    def tqdm(iterable, **_):
+    def tqdm(iterable: Iterable[T], **_: dict[str, Any]) -> Iterator[T]:
         return iter(iterable)
 
 
@@ -58,8 +61,8 @@ def general_matching(
     return find_matches(sorted_players, sorted_overlaps)
 
 
-def teams_matching(teams: Iterable[Iterable[str]]):
-    teams = [list(team) for team in teams]
+def teams_matching(teams: Collection[Collection[str]]) -> list[list[OverlapSet]]:
+    teams = sorted(sorted(team) for team in teams)
     assert len(teams) >= 2, "No teams provided for team matching."
 
     team_amount = len(teams)

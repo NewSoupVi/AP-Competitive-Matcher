@@ -46,8 +46,22 @@ def greedy_matching(match: list[OverlapSet]) -> BalancedMatchup:
         for team, next_player in zip(teams, next_players):
             team.players_playing_games.append(next_player)
 
-    return BalancedMatchup(teams, unbalanced_overlap_count <= 2, alternate_games)
+    best_team = max(teams)
+    worst_team = min(teams)
+
+    matchup_is_balanced = unbalanced_overlap_count <= 2 or (
+        best_team.overall_proficiency - worst_team.overall_proficiency <= 1
+    )
+
+    return BalancedMatchup(teams, matchup_is_balanced, alternate_games)
+
+
+def sorted_greedy_matching(match: list[OverlapSet]) -> BalancedMatchup:
+    match_sorted_descending_by_range = sorted(
+        match, key=lambda overlap: overlap.range_of_best_overlap_or_inf_if_no_overlaps, reverse=True
+    )
+    return greedy_matching(match_sorted_descending_by_range)
 
 
 def balance_match(match: list[OverlapSet]) -> BalancedMatchup:
-    return greedy_matching(match)
+    return sorted_greedy_matching(match)

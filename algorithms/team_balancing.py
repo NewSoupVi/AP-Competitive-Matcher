@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from typing import cast
 
 import config
-from algorithms.balancing import TeamWithSetGames
-from algorithms.players import MatchupWithSetGames, OverlapSet, Playing, SingleOverlap
+from algorithms.players import MatchupWithSetGames, OverlapSet, Playing, SingleOverlap, TeamWithSetGames
 
 
 @dataclass(frozen=True)
@@ -17,7 +16,7 @@ class TeamMatchup(MatchupWithSetGames):
     proficiency_difference_score: float
 
     @property
-    def team_matchup_score(self):
+    def team_matchup_score(self) -> float:
         return self.regular_score + self.proficiency_difference_score
 
 
@@ -27,7 +26,7 @@ def find_best_team_matchups(teams: list[list[str]], matches: list[list[OverlapSe
         for player_name in team:
             team_number_per_player[player_name] = i
 
-    all_matchups = []
+    all_matchups: list[TeamMatchup] = []
 
     for match in matches:
         possible_game_combinations = cast(

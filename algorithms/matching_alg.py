@@ -4,7 +4,7 @@ from math import inf
 from multiprocessing import Manager, Pool
 from multiprocessing.managers import ValueProxy
 from operator import ior
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 from tqdm import tqdm
 
@@ -49,7 +49,7 @@ class MultiProcessingInput:
     starting_index: int
     current_score: float
     needed_players: int
-    cross_thread_achievable_score_value: Optional[ValueProxy[float]]
+    cross_thread_achievable_score_value: ValueProxy[float] | None
 
 
 def combination_util(
